@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fenja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1330; --paper:#F3F5FC; --coral:#FF6B5B; --teal:#2FE3B4;
+    --amber:#FFB84D; --violet:#8C7DFF; --green:#4ADE80; --dim: rgba(243,245,252,0.55);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{ width:100%; height:100%; background:var(--ink); font-family:'Inter',sans-serif; overflow:hidden; }
+  #stage{
+    position:relative; width:100%; height:100vh;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(140,125,255,0.16), transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(47,227,180,0.13), transparent 50%),
+      var(--ink);
+  }
+  .circuit{
+    position:absolute; inset:0; opacity:0.10; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(243,245,252,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(243,245,252,0.5) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(circle at 50% 50%, black 0%, transparent 75%);
+  }
+  .particle{ position:absolute; border-radius:50%; pointer-events:none; opacity:0.35; }
+  .p1{ width:6px; height:6px; background:var(--teal); top:22%; left:12%; animation: drift1 9s ease-in-out infinite; }
+  .p2{ width:4px; height:4px; background:var(--violet); top:68%; left:85%; animation: drift2 11s ease-in-out infinite; }
+  .p3{ width:5px; height:5px; background:var(--amber); top:80%; left:20%; animation: drift3 13s ease-in-out infinite; }
+  @keyframes drift1{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(18px,-14px);} }
+  @keyframes drift2{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(-16px,12px);} }
+  @keyframes drift3{ 0%,100%{transform:translate(0,0);} 50%{transform:translate(12px,16px);} }
+
+  #watermark{
+    position:absolute; top:16px; right:24px; z-index:55;
+    font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.18em;
+    color:rgba(243,245,252,0.3); text-transform:uppercase; transition:opacity 0.4s;
+  }
+
+  #progress-wrap{ position:absolute; top:0; left:0; right:0; height:6px; background:rgba(243,245,252,0.08); z-index:50; display:flex; cursor:pointer; }
+  .seg{ flex:1; margin-right:2px; background:rgba(243,245,252,0.12); position:relative; overflow:hidden; }
+  .seg:last-child{ margin-right:0; }
+  .seg-fill{ position:absolute; top:0; left:0; height:100%; width:0%; background:var(--teal); }
+  .seg:hover{ background:rgba(243,245,252,0.22); }
+  #meta{ position:absolute; top:16px; left:24px; z-index:60; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:0.06em; color:var(--dim); text-transform:uppercase; }
+  #controls{ position:absolute; bottom:20px; right:24px; z-index:60; display:flex; gap:10px; }
+  #controls button{
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    background:rgba(243,245,252,0.08); color:var(--paper);
+    border:1px solid rgba(243,245,252,0.18); border-radius:20px;
+    padding:8px 16px; cursor:pointer; letter-spacing:0.02em;
+    transition: background 0.2s, transform 0.15s;
+  }
+  #controls button:hover{ background:rgba(243,245,252,0.16); transform:translateY(-1px); }
+  #dotnav{ position:absolute; bottom:24px; left:24px; z-index:60; display:flex; gap:6px; flex-wrap:wrap; max-width:200px; }
+  #dotnav button{ width:8px; height:8px; border-radius:50%; border:none; padding:0; background:rgba(243,245,252,0.25); cursor:pointer; transition: background 0.2s, transform 0.2s; }
+  #dotnav button.active{ background:var(--teal); transform:scale(1.3); }
+  #dotnav button:hover{ background:rgba(243,245,252,0.5); }
+
+  .scene{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:56px 8vw; opacity:0; pointer-events:none; transition: opacity 0.55s ease; text-align:center;
+  }
+  .scene.active{ opacity:1; pointer-events:auto; }
+
+  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--teal); margin-bottom:14px; opacity:0; }
+  .headline{ font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(26px,4.4vw,50px); line-height:1.12; color:var(--paper); max-width:18ch; opacity:0; }
+  .headline .hl{ color:var(--teal); } .headline .hl-coral{ color:var(--coral); } .headline .hl-amber{ color:var(--amber); }
+  .caption{ font-family:'Inter',sans-serif; font-size:clamp(13.5px,1.4vw,17px); color:var(--dim); max-width:48ch; margin-top:14px; line-height:1.5; opacity:0; }
+
+  .scene.active .eyebrow{ animation: riseIn 0.45s ease forwards 0.08s; }
+  .scene.active .headline{ animation: riseIn 0.55s ease forwards 0.18s; }
+  .scene.active .caption{ animation: riseIn 0.55s ease forwards 0.36s; }
+
+  @keyframes riseIn{ from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+  @keyframes popIn{ to{opacity:1; transform:scale(1);} }
+  @keyframes chipIn{ to{opacity:1; transform:translateY(0);} }
+
+  .badge{
+    display:inline-block; font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase; padding:5px 12px; border-radius:20px; margin-bottom:12px; opacity:0;
+  }
+  .scene.active .badge{ animation: riseIn 0.4s ease forwards 0.05s; }
+  .badge.live{ background:rgba(47,227,180,0.14); color:var(--teal); border:1px solid rgba(47,227,180,0.4); }
+  .badge.build{ background:rgba(255,184,77,0.14); color:var(--amber); border:1px solid rgba(255,184,77,0.4); }
+
+  /* ===== SCENE 0: Fenja banner ===== */
+  .logomark{ position:relative; width:96px; height:96px; margin-bottom:20px; opacity:0; transform:scale(0.8); }
+  .scene.active .logomark{ animation: popIn 0.55s cubic-bezier(.2,.8,.3,1.4) forwards 0.15s; }
+  .logomark-badge{
+    width:96px; height:96px; border-radius:24px;
+    background:linear-gradient(135deg, rgba(47,227,180,0.18), rgba(140,125,255,0.18));
+    border:1px solid rgba(243,245,252,0.16);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logomark .flagpart{ position:relative; }
+  .logomark .flagpart .pole{ width:5px; height:52px; background:var(--coral); margin:0 auto; border-radius:3px; }
+  .logomark .flagpart .tri{ position:absolute; top:0; left:calc(50% + 2px); width:30px; height:20px; background:var(--coral); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .logomark .checkpart{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; opacity:0; }
+  .logomark .checkpart svg{ width:52px; height:52px; }
+  .scene.active .logomark .flagpart{ animation: flagOut 0.45s ease forwards 0.7s; }
+  .scene.active .logomark .checkpart{ animation: checkIn 0.45s ease forwards 0.7s; }
+  .wordmark{
+    font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(38px,7vw,64px);
+    letter-spacing:0.02em; color:var(--paper); opacity:0;
+  }
+  .scene.active .wordmark{ animation: riseIn 0.5s ease forwards 1.1s; }
+
+  /* ===== SCENE 1: document formats ===== */
+  .doc-pile{ position:relative; width:100%; max-width:520px; height:140px; margin-bottom:4px;}
+  .doc{
+    position:absolute; width:74px; height:94px; border-radius:10px;
+    background:var(--paper); top:18px; left:50%;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+    box-shadow:0 12px 24px rgba(0,0,0,0.35); opacity:0;
+  }
+  .doc svg{ width:30px; height:30px; }
+  .doc .tag{ font-family:'JetBrains Mono',monospace; font-size:8.5px; font-weight:700; letter-spacing:0.05em; padding:2px 6px; border-radius:5px; color:#fff; }
+  .doc1 .tag, .doc4 .tag{ background:var(--coral); }
+  .doc2 .tag, .doc5 .tag{ background:var(--violet); }
+  .doc3 .tag{ background:var(--amber); color:var(--ink); }
+  .doc4 .tag{ background:var(--green); color:var(--ink); }
+  .scene.active .doc{ animation: dropIn 0.6s cubic-bezier(.2,.9,.3,1.3) forwards; }
+  .doc1{ --tx:-215px; --rot:-13deg; animation-delay:0.25s !important; }
+  .doc2{ --tx:-107px; --rot:-6deg; animation-delay:0.35s !important; }
+  .doc3{ --tx:0px; --rot:2deg; animation-delay:0.45s !important; }
+  .doc4{ --tx:107px; --rot:8deg; animation-delay:0.55s !important; }
+  .doc5{ --tx:212px; --rot:15deg; animation-delay:0.65s !important; }
+  @keyframes dropIn{
+    0%{opacity:0; transform:translate(var(--tx,0),-160px) rotate(var(--rot,0deg)) scale(0.6);}
+    70%{opacity:1;}
+    100%{opacity:1; transform:translate(var(--tx,0),-38px) rotate(var(--rot,0deg)) scale(1);}
+  }
+
+  /* ===== SCENE 2: extraction chips ===== */
+  .extract-row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; max-width:620px; margin-top:6px; }
+  .chip{
+    font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:500;
+    background:rgba(47,227,180,0.10); border:1px solid rgba(47,227,180,0.4);
+    color:var(--teal); padding:8px 14px; border-radius:8px; opacity:0; transform:translateY(10px);
+  }
+  .scene.active .chip{ animation: chipIn 0.4s ease forwards; }
+  .chip1{ animation-delay:0.7s !important; } .chip2{ animation-delay:0.82s !important; }
+  .chip3{ animation-delay:0.94s !important; } .chip4{ animation-delay:1.06s !important; }
+
+  /* ===== SCENE 3: comparison ===== */
+  .compare-row{ display:flex; align-items:center; gap:30px; margin-top:10px; }
+  .box{
+    width:140px; height:92px; border-radius:12px; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:8px;
+    font-family:'Sora',sans-serif; font-weight:700; font-size:12px; color:var(--paper);
+    background:rgba(243,245,252,0.06); border:1px solid rgba(243,245,252,0.16);
+    opacity:0; transform:scale(0.9);
+  }
+  .box svg{ width:26px; height:26px; }
+  .box.box1 svg{ color:var(--teal); }
+  .box.box2 svg{ color:var(--violet); }
+  .scene.active .box{ animation: popIn 0.4s ease forwards 0.65s; }
+  .box2{ animation-delay:0.8s !important; }
+  .bolt{ font-size:22px; color:var(--amber); opacity:0; }
+  .scene.active .bolt{ animation: fadeIn 0.3s ease forwards 0.98s; }
+  .flag-mini-row{ display:flex; gap:9px; margin-top:18px; }
+  .flag-mini{ width:9px; height:22px; background:var(--coral); border-radius:2px 2px 0 0; position:relative; opacity:0; transform:translateY(10px); }
+  .flag-mini::before{ content:''; position:absolute; top:0; left:9px; width:15px; height:8px; background:var(--coral); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .scene.active .flag-mini{ animation: flagPop 0.3s ease forwards; }
+  .fm1{ animation-delay:1.1s !important; } .fm2{ animation-delay:1.17s !important; }
+  .fm3{ animation-delay:1.24s !important; } .fm4{ animation-delay:1.31s !important; }
+  .fm5{ animation-delay:1.38s !important; }
+  @keyframes flagPop{ to{opacity:1; transform:translateY(0);} }
+
+  /* ===== SCENE 4: false alerts ===== */
+  .noise-row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; max-width:600px; margin-top:12px; }
+  .noise-tag{
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    background:rgba(255,107,91,0.10); border:1px solid rgba(255,107,91,0.4);
+    color:var(--coral); padding:8px 14px; border-radius:20px; opacity:0; transform:translateY(8px);
+  }
+  .scene.active .noise-tag{ animation: chipIn 0.4s ease forwards; }
+  .noise-tag:nth-child(1){ animation-delay:0.7s !important; }
+  .noise-tag:nth-child(2){ animation-delay:0.82s !important; }
+  .noise-tag:nth-child(3){ animation-delay:0.94s !important; }
+
+  /* ===== SCENE 5: filter (flag -> check) ===== */
+  .filter-wrap{ position:relative; }
+  .filter-row{ display:flex; gap:16px; margin-top:14px; flex-wrap:wrap; justify-content:center; max-width:560px; }
+  .fitem{ position:relative; width:34px; height:46px; }
+  .fitem .flagpart{ position:absolute; inset:0; }
+  .fitem .flagpart .pole{ width:3.5px; height:46px; background:var(--coral); margin:0 auto; border-radius:2px; }
+  .fitem .flagpart .tri{ position:absolute; top:0; left:calc(50% + 1px); width:20px; height:13px; background:var(--coral); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+  .fitem .checkpart{ position:absolute; inset:0; opacity:0; display:flex; align-items:center; justify-content:center; }
+  .fitem .checkpart svg{ width:30px; height:30px; }
+  .scene.active .fitem.convert .flagpart{ animation: flagOut 0.4s ease forwards; }
+  .scene.active .fitem.convert .checkpart{ animation: checkIn 0.4s ease forwards; }
+  .f1 .flagpart, .f1 .checkpart{ animation-delay:0.68s !important; }
+  .f2 .flagpart, .f2 .checkpart{ animation-delay:0.8s !important; }
+  .f3 .flagpart, .f3 .checkpart{ animation-delay:0.92s !important; }
+  .f4 .flagpart, .f4 .checkpart{ animation-delay:1.04s !important; }
+  .f6 .flagpart, .f6 .checkpart{ animation-delay:1.16s !important; }
+  .f7 .flagpart, .f7 .checkpart{ animation-delay:1.28s !important; }
+  .f5.stay .flagpart{ opacity:1; animation: shake 0.3s ease 1.5s 2; }
+  @keyframes shake{ 0%,100%{transform:translateX(0);} 50%{transform:translateX(3px);} }
+  @keyframes flagOut{ 0%{opacity:1; transform:scale(1) rotate(0);} 100%{opacity:0; transform:scale(0.4) rotate(20deg);} }
+  @keyframes checkIn{ 0%{opacity:0; transform:scale(0.3);} 60%{opacity:1; transform:scale(1.18);} 100%{opacity:1; transform:scale(1);} }
+  .filter-caption{ margin-top:14px; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--dim); opacity:0; }
+  .scene.active .filter-caption{ animation: fadeIn 0.4s ease forwards 1.75s; }
+  .filter-caption .hl-coral{ color:var(--coral); font-weight:600; }
+  .filter-caption .hl{ color:var(--teal); font-weight:600; }
+  .sparkle{ position:absolute; top:-6px; color:var(--teal); opacity:0; width:14px; height:14px; }
+  .sparkle svg{ width:100%; height:100%; }
+  .sp1{ left:calc(50% - 40px); animation:sparklePop 0.6s ease forwards 1.45s; color:var(--teal); }
+  .sp2{ left:50%; top:-16px; animation:sparklePop 0.6s ease forwards 1.56s; color:var(--amber); }
+  .sp3{ left:calc(50% + 34px); animation:sparklePop 0.6s ease forwards 1.67s; color:var(--violet); }
+  @keyframes sparklePop{
+    0%{opacity:0; transform:scale(0.3) rotate(0deg) translateY(0);}
+    40%{opacity:1; transform:scale(1.1) rotate(45deg) translateY(-10px);}
+    100%{opacity:0; transform:scale(0.6) rotate(90deg) translateY(-22px);}
+  }
+
+  /* ===== SCENE 6: feature highlights ===== */
+  .feat-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px 16px; margin-top:12px; max-width:660px; }
+  .feat-card{
+    text-align:left; padding:14px 16px; border-radius:12px; background:rgba(243,245,252,0.05);
+    border:1px solid rgba(243,245,252,0.14); opacity:0; transform:translateY(12px);
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .scene.active .feat-card{ animation: riseIn 0.4s ease forwards; }
+  .fc1{ animation-delay:0.55s !important; } .fc2{ animation-delay:0.66s !important; }
+  .fc3{ animation-delay:0.77s !important; } .fc4{ animation-delay:0.88s !important; }
+  .feat-icon-chip{ width:34px; height:34px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+  .feat-icon-chip svg{ width:18px; height:18px; }
+  .fc1 .feat-icon-chip{ background:rgba(47,227,180,0.14); color:var(--teal); }
+  .fc2 .feat-icon-chip{ background:rgba(140,125,255,0.14); color:var(--violet); }
+  .fc3 .feat-icon-chip{ background:rgba(255,184,77,0.14); color:var(--amber); }
+  .fc4 .feat-icon-chip{ background:rgba(255,107,91,0.14); color:var(--coral); }
+  .feat-title{ font-family:'Sora',sans-serif; font-weight:700; font-size:13.5px; color:var(--paper); margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+  .feat-desc{ font-family:'Inter',sans-serif; font-size:11.5px; color:var(--dim); line-height:1.42; }
+  .status-ic{ font-size:11px; line-height:1; }
+  .status-ic.live{ color:var(--teal); }
+  .status-ic.build{ color:var(--amber); }
+
+  /* ===== SCENE 7: use case briefs ===== */
+  .usecase-row{ display:flex; gap:16px; margin-top:6px; flex-wrap:wrap; justify-content:center; }
+  .uc-card{
+    width:260px; padding:16px; border-radius:14px; background:rgba(243,245,252,0.05);
+    border:1px solid rgba(243,245,252,0.14); opacity:0; transform:translateY(14px); text-align:left;
+  }
+  .scene.active .uc-card{ animation: riseIn 0.45s ease forwards; }
+  .uc1{ animation-delay:0.6s !important; } .uc2{ animation-delay:0.75s !important; }
+  .uc-head{ display:flex; align-items:center; gap:9px; margin-bottom:8px; }
+  .uc-icon-chip{ width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .uc-icon-chip svg{ width:15px; height:15px; }
+  .uc1 .uc-icon-chip{ background:rgba(74,222,128,0.14); color:var(--green); }
+  .uc2 .uc-icon-chip{ background:rgba(140,125,255,0.14); color:var(--violet); }
+  .uc-title{ font-family:'Sora',sans-serif; font-weight:700; font-size:14.5px; color:var(--paper); }
+  .uc-desc{ font-family:'Inter',sans-serif; font-size:11.5px; color:var(--dim); line-height:1.48; margin-bottom:9px; }
+  .uc-tag{ font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--violet); background:rgba(140,125,255,0.1); border:1px solid rgba(140,125,255,0.35); padding:5px 10px; border-radius:14px; display:inline-block; }
+
+  /* ===== SCENE 8: close ===== */
+  .pipeline-row{ display:flex; align-items:center; gap:10px; margin-top:14px; flex-wrap:wrap; justify-content:center; }
+  .pword{ font-family:'Sora',sans-serif; font-weight:800; font-size:clamp(18px,2.6vw,28px); opacity:0; }
+  .scene.active .pword{ animation: riseIn 0.4s ease forwards; }
+  .pw1{ color:var(--teal); animation-delay:0.6s !important; }
+  .pw2{ color:var(--dim); animation-delay:0.7s !important; font-weight:400; font-size:0.7em; }
+  .pw3{ color:var(--violet); animation-delay:0.8s !important; }
+  .pw4{ color:var(--amber); animation-delay:1s !important; }
+  .cta-logo{ font-family:'JetBrains Mono',monospace; font-size:14px; letter-spacing:0.2em; color:var(--teal); text-transform:uppercase; margin-top:18px; opacity:0; }
+  .scene.active .cta-logo{ animation: riseIn 0.4s ease forwards 1.2s; }
+
+  @media (max-width:640px){
+    .feat-grid{ grid-template-columns:1fr; }
+    .usecase-row{ flex-direction:column; align-items:center; }
+    .doc-pile{ transform:scale(0.7); }
+  }
+
+  body.is-paused *{ animation-play-state: paused !important; }
+  @media (prefers-reduced-motion: reduce){ .scene *{ animation-duration:0.2s !important; } }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <div class="circuit"></div>
+  <div class="particle p1"></div>
+  <div class="particle p2"></div>
+  <div class="particle p3"></div>
+  <div id="progress-wrap"></div>
+  <div id="meta">Scene <span id="sceneNum">1</span> / <span id="sceneTotal">9</span> · ~75 sec</div>
+  <div id="watermark">Fenja</div>
+
+  <!-- SCENE 0: banner -->
+  <section class="scene" id="s0">
+    <div class="logomark">
+      <div class="logomark-badge">
+        <div class="flagpart"><div class="pole"></div><div class="tri"></div></div>
+        <div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      </div>
+    </div>
+    <div class="wordmark">Fenja</div>
+  </section>
+
+  <!-- SCENE 1: document formats -->
+  <section class="scene" id="s1">
+    <div class="badge live">● Live in Production</div>
+    <div class="doc-pile">
+      <div class="doc doc1"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="var(--ink)" opacity="0.08"/><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M15 2v5h5" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/></svg><span class="tag">PDF</span></div>
+      <div class="doc doc2"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="var(--ink)" opacity="0.08"/><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M15 2v5h5" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 13h8M8 16.5h8M8 9.5h4" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round"/></svg><span class="tag">DOCX</span></div>
+      <div class="doc doc3"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="var(--ink)" opacity="0.08"/><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M15 2v5h5" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 12l3 3-3 3M17 12l-3 3 3 3" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="tag">SCAN</span></div>
+      <div class="doc doc4"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="var(--ink)" stroke-width="1.4"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18" stroke="var(--ink)" stroke-width="1.1"/></svg><span class="tag">XLSX</span></div>
+      <div class="doc doc5"><svg viewBox="0 0 24 24" fill="none"><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" fill="var(--ink)" opacity="0.08"/><path d="M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M15 2v5h5" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 13h8M8 16.5h8M8 9.5h4" stroke="var(--ink)" stroke-width="1.3" stroke-linecap="round"/></svg><span class="tag">DOCX</span></div>
+    </div>
+    <div class="eyebrow">Every Deal Starts Here</div>
+    <h1 class="headline">Term Sheets. Every format.<br>Every <span class="hl-coral">headache</span>.</h1>
+    <p class="caption">PDFs, Word docs, Excel, even scanned copies — every counterparty sends them differently. Somebody still has to read every single one.</p>
+  </section>
+
+  <!-- SCENE 2: extraction -->
+  <section class="scene" id="s2">
+    <div class="eyebrow">First AI Pass · Reading the Fine Print</div>
+    <h1 class="headline">The First AI Pass reads<br>it all — <span class="hl">in minutes</span>.</h1>
+    <div class="extract-row">
+      <span class="chip chip1">Counterparty ✓</span>
+      <span class="chip chip2">Notional ✓</span>
+      <span class="chip chip3">Trade Date ✓</span>
+      <span class="chip chip4">Rate ✓</span>
+    </div>
+    <p class="caption">No templates, no manual re-typing. PDF, DOCX, Excel, even scanned documents — Fenja pulls out the terms that matter, in minutes.</p>
+  </section>
+
+  <!-- SCENE 3: comparison -->
+  <section class="scene" id="s3">
+    <div class="eyebrow">Deterministic Check · Comparing to Your Booking System</div>
+    <h1 class="headline">Then it's checked against<br>your <span class="hl">booking system</span>.</h1>
+    <div class="compare-row">
+      <div class="box box1">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M5 3h8l4 4v11a1 1 0 01-1 1H5a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M13 3v4h4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><circle cx="10" cy="14.5" r="2.4" stroke="currentColor" stroke-width="1.4"/><path d="M11.8 16.3l1.7 1.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Extracted Terms
+      </div>
+      <div class="bolt">⚡</div>
+      <div class="box box2">
+        <svg viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="5.5" rx="8" ry="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 5.5v6.5c0 1.66 3.58 3 8 3s8-1.34 8-3V5.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" stroke="currentColor" stroke-width="1.5"/></svg>
+        Booking System
+      </div>
+    </div>
+    <div class="flag-mini-row">
+      <div class="flag-mini fm1"></div><div class="flag-mini fm2"></div>
+      <div class="flag-mini fm3"></div><div class="flag-mini fm4"></div>
+      <div class="flag-mini fm5"></div>
+    </div>
+    <p class="caption">A fast, rules-based comparison — no black box. Anything that doesn't match gets flagged for review.</p>
+  </section>
+
+  <!-- SCENE 4: false alerts -->
+  <section class="scene" id="s4">
+    <div class="eyebrow">The Catch</div>
+    <h1 class="headline">Not every flag is<br>a <span class="hl-coral">real problem</span>.</h1>
+    <div class="noise-row">
+      <span class="noise-tag">"Feb 1st" vs "01/02"</span>
+      <span class="noise-tag">"Buy" vs "Purchase"</span>
+      <span class="noise-tag">Industry shorthand</span>
+    </div>
+    <p class="caption">Same deal. Different words. Your team ends up chasing formatting quirks instead of actual risk.</p>
+  </section>
+
+  <!-- SCENE 5: filter -->
+  <section class="scene" id="s5">
+    <div class="eyebrow">Second AI Pass · Separating Signal From Noise</div>
+    <h1 class="headline">The Second AI Pass knows<br>the <span class="hl">difference</span>.</h1>
+    <div class="filter-wrap">
+      <div class="sparkle sp1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></div>
+      <div class="sparkle sp2"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></div>
+      <div class="sparkle sp3"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></div>
+      <div class="filter-row">
+        <div class="fitem convert f1"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div><div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="fitem convert f2"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div><div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="fitem convert f3"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div><div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="fitem stay f5"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div></div>
+        <div class="fitem convert f4"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div><div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="fitem convert f6"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div><div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+        <div class="fitem convert f7"><div class="flagpart"><div class="pole"></div><div class="tri"></div></div><div class="checkpart"><svg viewBox="0 0 24 24" fill="none"><path d="M4 12.5l5 5L20 6" stroke="#2FE3B4" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+      </div>
+    </div>
+    <div class="filter-caption"><span class="hl">6 false alerts cleared</span> · <span class="hl-coral">1 real mismatch kept</span> for review</div>
+    <p class="caption">It reads context the way a human analyst would — clearing the noise automatically, and leaving only what genuinely needs a second look.</p>
+  </section>
+
+  <!-- SCENE 6: feature highlights -->
+  <section class="scene" id="s6">
+    <div class="eyebrow">Not Just Fast — Provable</div>
+    <h1 class="headline">Built to be <span class="hl">trusted</span>.</h1>
+    <div class="feat-grid">
+      <div class="feat-card fc1">
+        <div class="feat-icon-chip"><svg viewBox="0 0 24 24" fill="none"><path d="M9 15l6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M8 16a3 3 0 010-4.24l2-2a3 3 0 014.24 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 8a3 3 0 010 4.24l-2 2a3 3 0 01-4.24 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <div>
+          <div class="feat-title">Full Traceability <span class="status-ic live">●</span></div>
+          <div class="feat-desc">Every number is linked to its exact page and clause in the source document.</div>
+        </div>
+      </div>
+      <div class="feat-card fc2">
+        <div class="feat-icon-chip"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="17" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.6"/><path d="M8 13l2.5 2.5L16 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="feat-title">Automated Audit Trail <span class="status-ic live">●</span></div>
+          <div class="feat-desc">A digital log of every step — from upload, to AI review, to final approval.</div>
+        </div>
+      </div>
+      <div class="feat-card fc3">
+        <div class="feat-icon-chip"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3l9 5-9 5-9-5 9-5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3 13l9 5 9-5" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+        <div>
+          <div class="feat-title">Universal Document Reader <span class="status-ic live">●</span></div>
+          <div class="feat-desc">One reader for PDF, Word, Excel, and scanned copies — no separate pipeline per format.</div>
+        </div>
+      </div>
+      <div class="feat-card fc4">
+        <div class="feat-icon-chip"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+        <div>
+          <div class="feat-title">Exception-Based Review <span class="status-ic build">◐</span></div>
+          <div class="feat-desc">Officers only see what's flagged high-risk, each with a confidence score attached.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCENE 7: use case briefs -->
+  <section class="scene" id="s7">
+    <div class="badge build">◐ In Build</div>
+    <h1 class="headline">Fenja doesn't stop<br>at <span class="hl-amber">Term Sheets</span>.</h1>
+    <div class="usecase-row">
+      <div class="uc-card uc1">
+        <div class="uc-head">
+          <div class="uc-icon-chip"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 9h18M9 9v11" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div class="uc-title">Business Continuity (BIA/BCP)</div>
+        </div>
+        <div class="uc-desc">Consolidates multiple Excel responses across sites, mapped once, with your own transformation rules — and flags incomplete responses.</div>
+        <div class="uc-tag">Rule: "concatenate Site A + Site B"</div>
+      </div>
+      <div class="uc-card uc2">
+        <div class="uc-head">
+          <div class="uc-icon-chip"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2l7 3v6c0 5-3 8.5-7 11-4-2.5-7-6-7-11V5l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></div>
+          <div class="uc-title">Credit Insurance Coverage</div>
+        </div>
+        <div class="uc-desc">Reads scanned policies across every broker and insurer, sums coverage by type, and checks it against the asset pledged as collateral.</div>
+        <div class="uc-tag">✓ Coverage Adequacy Check</div>
+      </div>
+    </div>
+    <p class="caption">Same extraction and orchestration engine — applied to two more use cases already in build.</p>
+  </section>
+
+  <!-- SCENE 8: close -->
+  <section class="scene" id="s8">
+    <h1 class="headline">Fenja isn't just a<br>Term Sheet tool.</h1>
+    <p class="caption">It's a <strong style="color:var(--teal);">Data Orchestrator.</strong></p>
+    <div class="pipeline-row">
+      <span class="pword pw1">Extract</span>
+      <span class="pword pw2">→</span>
+      <span class="pword pw3">Transform</span>
+      <span class="pword pw2">→</span>
+      <span class="pword pw4">Build</span>
+    </div>
+    <div class="cta-logo">Fenja</div>
+  </section>
+
+  <div id="dotnav"></div>
+  <div id="controls">
+    <button id="replayBtn">↺ Replay</button>
+    <button id="pauseBtn">⏸ Pause</button>
+  </div>
+</div>
+
+<script>
+  const durations = [4000, 8000, 8500, 8000, 7000, 10000, 11000, 12500, 6000]; // = 75000ms
+  const scenes = Array.from(document.querySelectorAll('.scene'));
+  const progressWrap = document.getElementById('progress-wrap');
+  const dotnav = document.getElementById('dotnav');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const replayBtn = document.getElementById('replayBtn');
+  const sceneNumEl = document.getElementById('sceneNum');
+  const watermark = document.getElementById('watermark');
+  document.getElementById('sceneTotal').textContent = scenes.length;
+
+  scenes.forEach((_, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'seg';
+    seg.addEventListener('click', () => goToScene(i));
+    const fill = document.createElement('div');
+    fill.className = 'seg-fill';
+    seg.appendChild(fill);
+    progressWrap.appendChild(seg);
+
+    const dot = document.createElement('button');
+    dot.setAttribute('aria-label', 'Go to scene ' + (i + 1));
+    dot.addEventListener('click', () => goToScene(i));
+    dotnav.appendChild(dot);
+  });
+  const fills = Array.from(document.querySelectorAll('.seg-fill'));
+  const dots = Array.from(dotnav.querySelectorAll('button'));
+
+  let current = -1;
+  let timer = null;
+  let paused = false;
+  let segStartTime = 0;
+  let segElapsed = 0;
+
+  function clearFillAnim(el){ el.style.transition = 'none'; el.style.width = '0%'; void el.offsetWidth; }
+
+  function goToScene(i){
+    if(i >= scenes.length){ i = scenes.length - 1; }
+    if(i < 0){ i = 0; }
+    scenes.forEach(s => s.classList.remove('active'));
+    scenes[i].classList.add('active');
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === i));
+    sceneNumEl.textContent = i + 1;
+    watermark.style.opacity = (i === 0) ? '0' : '1';
+    current = i;
+    segElapsed = 0;
+    fills.forEach((f, idx) => {
+      if(idx < i){ f.style.transition='none'; f.style.width='100%'; }
+      else if(idx > i){ f.style.transition='none'; f.style.width='0%'; }
+    });
+    if(!paused){ runSegment(durations[i]); }
+    else { clearFillAnim(fills[i]); clearTimeout(timer); }
+  }
+
+  function runSegment(duration){
+    const fill = fills[current];
+    clearFillAnim(fill);
+    requestAnimationFrame(() => {
+      fill.style.transition = `width ${duration}ms linear`;
+      fill.style.width = '100%';
+    });
+    segStartTime = Date.now();
+    clearTimeout(timer);
+    timer = setTimeout(() => { if(current < scenes.length - 1){ goToScene(current + 1); } }, duration);
+  }
+
+  function togglePause(){
+    if(!paused){
+      paused = true;
+      document.body.classList.add('is-paused');
+      clearTimeout(timer);
+      segElapsed += Date.now() - segStartTime;
+      const fill = fills[current];
+      const computedWidth = getComputedStyle(fill).width;
+      fill.style.transition = 'none';
+      fill.style.width = computedWidth;
+      pauseBtn.textContent = '▶ Play';
+    } else {
+      paused = false;
+      document.body.classList.remove('is-paused');
+      const remaining = Math.max(durations[current] - segElapsed, 50);
+      const fill = fills[current];
+      segStartTime = Date.now();
+      requestAnimationFrame(() => {
+        fill.style.transition = `width ${remaining}ms linear`;
+        fill.style.width = '100%';
+      });
+      timer = setTimeout(() => { if(current < scenes.length - 1){ goToScene(current + 1); } }, remaining);
+      pauseBtn.textContent = '⏸ Pause';
+    }
+  }
+
+  pauseBtn.addEventListener('click', togglePause);
+  replayBtn.addEventListener('click', () => window.location.reload());
+
+  goToScene(0);
+</script>
+</body>
+</html>

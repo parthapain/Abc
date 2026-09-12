@@ -1,0 +1,354 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Level 2 Rubric</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+  :root{
+    --bg:#f1efe9;
+    --surface:#ffffff;
+    --surface-2:#f7f5f0;
+    --ink:#1f2430;
+    --ink-soft:#5c6270;
+    --ink-faint:#8b8f9b;
+    --line:#dedad2;
+    --accent:#2f5c53;
+    --accent-ink:#1d3730;
+    --accent-soft:#e2ebe7;
+    --score-0:#b0432c;
+    --score-1:#b9832a;
+    --score-2:#6b6f7c;
+    --score-3:#3d7a6a;
+    --score-4:#1d453d;
+    --score-0-soft:#f8e7e2;
+    --score-1-soft:#f7ecdb;
+    --score-2-soft:#eceef1;
+    --score-3-soft:#e2ede8;
+    --score-4-soft:#dbe8e3;
+    --shadow: 0 1px 2px rgba(31,36,48,.04), 0 8px 24px -12px rgba(31,36,48,.12);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#14171c;
+      --surface:#1b1f26;
+      --surface-2:#20242c;
+      --ink:#e9e8e3;
+      --ink-soft:#a7abb6;
+      --ink-faint:#767c88;
+      --line:#2c313b;
+      --accent:#7fb8a8;
+      --accent-ink:#c3e2d7;
+      --accent-soft:#213531;
+      --score-0:#e0806a;
+      --score-1:#dcac5f;
+      --score-2:#9aa0ad;
+      --score-3:#6fb39e;
+      --score-4:#9ecfbe;
+      --score-0-soft:#3a241f;
+      --score-1-soft:#3a2f1c;
+      --score-2-soft:#282c33;
+      --score-3-soft:#213531;
+      --score-4-soft:#1c332c;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#14171c;
+    --surface:#1b1f26;
+    --surface-2:#20242c;
+    --ink:#e9e8e3;
+    --ink-soft:#a7abb6;
+    --ink-faint:#767c88;
+    --line:#2c313b;
+    --accent:#7fb8a8;
+    --accent-ink:#c3e2d7;
+    --accent-soft:#213531;
+    --score-0:#e0806a;
+    --score-1:#dcac5f;
+    --score-2:#9aa0ad;
+    --score-3:#6fb39e;
+    --score-4:#9ecfbe;
+    --score-0-soft:#3a241f;
+    --score-1-soft:#3a2f1c;
+    --score-2-soft:#282c33;
+    --score-3-soft:#213531;
+    --score-4-soft:#1c332c;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:840px; margin:0 auto; padding:56px 24px 96px;}
+
+  header{margin-bottom:44px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.12em;
+    text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:14px;
+  }
+  h1{
+    font-family:'Fraunces', serif; font-weight:600; font-size:clamp(32px,5vw,44px);
+    line-height:1.08; margin:0 0 12px; text-wrap:balance; letter-spacing:-.01em;
+  }
+  .lede{
+    font-size:16.5px; line-height:1.6; color:var(--ink-soft); max-width:60ch; margin:0 0 24px;
+  }
+  .total-strip{
+    display:flex; align-items:center; gap:18px; background:var(--surface);
+    border:1px solid var(--line); border-radius:12px; padding:16px 20px; box-shadow:var(--shadow);
+  }
+  .total-num{
+    font-family:'Fraunces', serif; font-size:34px; font-weight:600; color:var(--accent-ink);
+    line-height:1; white-space:nowrap;
+  }
+  .total-num span{font-size:16px; color:var(--ink-faint); font-weight:500; font-family:'IBM Plex Sans',sans-serif;}
+  .total-note{font-size:13.5px; color:var(--ink-soft); line-height:1.5;}
+
+  .dim{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:28px 28px 26px; margin-bottom:22px; box-shadow:var(--shadow);
+  }
+  .dim-head{display:flex; gap:16px; align-items:baseline; margin-bottom:6px; flex-wrap:wrap;}
+  .tags{display:flex; gap:6px; flex-wrap:wrap; margin:2px 0 16px;}
+  .tag{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.04em;
+    padding:4px 9px; border-radius:100px; background:var(--accent-soft); color:var(--accent-ink);
+    border:1px solid var(--line); white-space:nowrap;
+  }
+  .dim-index{
+    font-family:'Fraunces', serif; font-size:15px; font-weight:600; color:var(--ink-faint);
+    letter-spacing:.02em;
+  }
+  .dim-title{
+    font-family:'Fraunces', serif; font-size:23px; font-weight:600; margin:0; letter-spacing:-.005em;
+  }
+  .dim-plain{
+    font-size:15.5px; color:var(--ink-soft); line-height:1.55; margin:10px 0 18px; max-width:64ch;
+  }
+
+  .tested-box{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+    padding:14px 18px; margin-bottom:20px;
+  }
+  .tested-label{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:8px;
+  }
+  .tested-box ul{margin:0; padding-left:18px; font-size:14.5px; line-height:1.6; color:var(--ink);}
+  .tested-box li{margin-bottom:4px;}
+  .tested-box li:last-child{margin-bottom:0;}
+
+  .scale{display:flex; flex-direction:column; gap:0;}
+  .rung{
+    display:grid; grid-template-columns:40px 1fr; gap:16px; padding:12px 0;
+    border-top:1px solid var(--line);
+  }
+  .rung:first-child{border-top:none;}
+  .rung-badge{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:15px;
+    align-self:start; margin-top:1px;
+  }
+  .rung-0 .rung-badge{background:var(--score-0-soft); color:var(--score-0);}
+  .rung-1 .rung-badge{background:var(--score-1-soft); color:var(--score-1);}
+  .rung-2 .rung-badge{background:var(--score-2-soft); color:var(--score-2);}
+  .rung-3 .rung-badge{background:var(--score-3-soft); color:var(--score-3);}
+  .rung-4 .rung-badge{background:var(--score-4-soft); color:var(--score-4);}
+  .rung-text{font-size:14.5px; line-height:1.55; padding-top:5px;}
+  .rung-text b{font-weight:600;}
+
+  .cap-note{
+    margin-top:18px; background:var(--accent-soft); border:1px solid var(--line);
+    border-left:3px solid var(--accent); border-radius:0 10px 10px 0; padding:14px 18px;
+  }
+  .cap-label{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin-bottom:6px;
+  }
+  .cap-note p{margin:0; font-size:14px; line-height:1.6; color:var(--ink);}
+  .cap-note p + p{margin-top:8px;}
+
+  footer{
+    margin-top:36px; padding-top:24px; border-top:1px solid var(--line);
+    font-size:13.5px; color:var(--ink-soft); line-height:1.6;
+  }
+  footer code{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; background:var(--surface-2);
+    padding:1px 6px; border-radius:4px; color:var(--ink);
+  }
+
+  @media (max-width:520px){
+    .wrap{padding:36px 16px 72px;}
+    .dim{padding:22px 18px 20px;}
+    .total-strip{flex-direction:column; align-items:flex-start; gap:8px;}
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Level 2 Assessment — Grading Guide</div>
+    <h1>How We Score a Submission</h1>
+    <p class="lede">There are 5 things we look at in every submission. The AI grader and the 3 human reviewers use this exact same guide — so everyone is judging by the same standard.</p>
+    <div class="total-strip">
+      <div class="total-num">20<span> / highest possible score</span></div>
+      <div class="total-note">5 things to look at, each worth up to 4 points. We never just go with a gut feeling — every point given must be backed up by something specific in the candidate's code or their write-up.</div>
+    </div>
+  </header>
+
+  <section class="dim">
+    <div class="dim-head">
+      <span class="dim-index">01</span>
+      <h2 class="dim-title">Does the design fit the problem?</h2>
+    </div>
+    <div class="tags"><span class="tag">Applications and Integration</span></div>
+    <p class="dim-plain">Did the candidate design something that actually fits this problem — or just paste in a generic setup and hope it works? Can they explain why they built it this way, in a way that holds up if someone pushes back?</p>
+
+    <div class="tested-box">
+      <div class="tested-label">What we look at</div>
+      <ul>
+        <li>Does the overall shape of the app make sense for this specific problem — how the pieces (data in, processing, review screen, storage) fit together?</li>
+        <li>Do they explain a real decision, tied to this actual project — not a boilerplate justification?</li>
+      </ul>
+    </div>
+
+    <div class="scale">
+      <div class="rung rung-0"><div class="rung-badge">0</div><div class="rung-text">No real structure — everything crammed into one place, with no explanation for any choice made.</div></div>
+      <div class="rung rung-1"><div class="rung-badge">1</div><div class="rung-text">Some structure, but it's inconsistent. What they say they built doesn't match what's actually there.</div></div>
+      <div class="rung rung-2"><div class="rung-badge">2</div><div class="rung-text">A sensible, standard setup. They explain their choices, but in a generic way that could apply to any project.</div></div>
+      <div class="rung rung-3"><div class="rung-badge">3</div><div class="rung-text">The design clearly fits this exact problem. They point to one real decision and explain why they made it.</div></div>
+      <div class="rung rung-4"><div class="rung-badge">4</div><div class="rung-text">Same as above, and they've clearly thought ahead about what could go wrong or grow. Their reasoning is specific enough to actually debate.</div></div>
+    </div>
+  </section>
+
+  <section class="dim">
+    <div class="dim-head">
+      <span class="dim-index">02</span>
+      <h2 class="dim-title">Is the AI agent well-built?</h2>
+    </div>
+    <div class="tags"><span class="tag">Agents and Workflows</span><span class="tag">Tools and MCPs</span><span class="tag">Model Selection and Optimization</span><span class="tag">Security and Safety</span></div>
+    <p class="dim-plain">Every submission has to work as a real agent — taking more than one step on its own, calling tools to get things done, and being trusted to act without a person confirming each move. This is where we check whether that's built responsibly, and whether it would hold up at real volume.</p>
+
+    <div class="tested-box">
+      <div class="tested-label">We expect every good submission to show:</div>
+      <ul>
+        <li>A clear, multi-step loop — the agent plans, acts, checks the result, and decides what's next, on its own, more than once</li>
+        <li>Well-designed tools for the AI to call — each with one clear job, and a way of reporting back <em>why</em> something failed, not just that it did</li>
+        <li>A real safety check before anything risky or hard-to-undo happens — not just "the AI seemed confident, so we let it go"</li>
+        <li>Sensible use of time and cost at real volume — batching where it makes sense, not re-sending far more information than is needed on every call</li>
+      </ul>
+    </div>
+
+    <div class="scale">
+      <div class="rung rung-0"><div class="rung-badge">0</div><div class="rung-text">Not really agentic at all — one call dressed up as a loop, or "tools" that don't actually get called.</div></div>
+      <div class="rung rung-1"><div class="rung-badge">1</div><div class="rung-text">A loop and tools exist, but a risky action can fire with no check at all, or it's one do-everything tool with no useful failure detail.</div></div>
+      <div class="rung rung-2"><div class="rung-badge">2</div><div class="rung-text">Reasonably built, but it would clearly waste time or money at real volume — or the safety check is there in name only and doesn't really check anything meaningful.</div></div>
+      <div class="rung rung-3"><div class="rung-badge">3</div><div class="rung-text">A sensible loop that knows when to stop, clearly-scoped tools, and a safety check that genuinely gates the risky action. No real waste.</div></div>
+      <div class="rung rung-4"><div class="rung-badge">4</div><div class="rung-text">Same as above, and it's clearly efficient at scale (batching, reusing results, not resending everything every time), with a safety check that considers real risk, not just a surface-level confidence number.</div></div>
+    </div>
+
+    <div class="cap-note">
+      <div class="cap-label">One serious problem overrides everything else</div>
+      <p>If a risky, hard-to-undo action can fire with <b>no check or approval step at all</b> — or the loop just runs unbounded with no sensible stopping point — this score cannot go above <b>1</b>, no matter how good everything else looks.</p>
+      <p>If it works but would clearly be <b>slow or costly at real-world scale</b> — or a safety check exists in name only and doesn't meaningfully check the action's own risk — the score cannot go above <b>2</b>.</p>
+      <p>If a submission trips <b>more than one of these problems at once</b>, the worse one wins — caps don't average together, even across two separate findings in this same area.</p>
+    </div>
+  </section>
+
+  <section class="dim">
+    <div class="dim-head">
+      <span class="dim-index">03</span>
+      <h2 class="dim-title">How do they handle unclear requirements?</h2>
+    </div>
+    <p class="dim-plain">Every use case has one thing left deliberately unclear — not a small missing detail, but a real judgment call where two different, reasonable people could go two different ways. Did the candidate notice it, and think it through — or just guess and move on?</p>
+
+    <div class="tested-box">
+      <div class="tested-label">What we look at</div>
+      <ul>
+        <li>Did they even notice there was a decision to make, or did they just get lucky?</li>
+        <li>Do they say, in their own words, which way they went and why — based on this actual project, not a generic reason?</li>
+        <li>Did they make it easy to change their mind later if that guess turns out wrong?</li>
+      </ul>
+    </div>
+
+    <div class="scale">
+      <div class="rung rung-0"><div class="rung-badge">0</div><div class="rung-text">Never addressed. They quietly assumed one answer, with no sign they even saw a choice to make.</div></div>
+      <div class="rung rung-1"><div class="rung-badge">1</div><div class="rung-text">They quietly picked a reasonable answer — but nothing shows it was on purpose rather than a lucky guess.</div></div>
+      <div class="rung rung-2"><div class="rung-badge">2</div><div class="rung-text">They say what they assumed, but don't explain why they chose that over another option.</div></div>
+      <div class="rung rung-3"><div class="rung-badge">3</div><div class="rung-text">They name the unclear part, say what they assumed, and give a real reason tied to this specific project.</div></div>
+      <div class="rung rung-4"><div class="rung-badge">4</div><div class="rung-text">Same as above, and they made their guess easy to undo — a setting to flip, or a clear note flagging it as their riskiest assumption.</div></div>
+    </div>
+  </section>
+
+  <section class="dim">
+    <div class="dim-head">
+      <span class="dim-index">04</span>
+      <h2 class="dim-title">Did they double-check the AI's work?</h2>
+    </div>
+    <div class="tags"><span class="tag">Prompt and Context Engineering</span></div>
+    <p class="dim-plain">In every use case, we know one specific mistake an AI coding assistant is likely to make by default — something that looks totally fine and doesn't crash, but is quietly wrong. Did the candidate catch it before shipping, or did it slip through?</p>
+
+    <div class="tested-box">
+      <div class="tested-label">What we look at</div>
+      <ul>
+        <li>Is that known mistake still sitting in their final code, unfixed?</li>
+        <li>If it's fixed — do they say, in their own words, exactly what the risk was and how they fixed it, in a way we can go check against the actual code?</li>
+        <li>How well-written the instructions are that their app sends the AI while it's running — clear, specific prompts are often the actual fix that avoids the mistake in the first place</li>
+      </ul>
+    </div>
+
+    <div class="scale">
+      <div class="rung rung-0"><div class="rung-badge">0</div><div class="rung-text">The known mistake is still there, unfixed. They don't mention this risk at all.</div></div>
+      <div class="rung rung-1"><div class="rung-badge">1</div><div class="rung-text">The mistake is still there, but they claim they checked for it. A claim with nothing to back it up — this counts as worse than saying nothing.</div></div>
+      <div class="rung rung-2"><div class="rung-badge">2</div><div class="rung-text">The mistake is avoided, but they never mention why — we can't tell if it was on purpose or a lucky accident.</div></div>
+      <div class="rung rung-3"><div class="rung-badge">3</div><div class="rung-text">The mistake is avoided, and they clearly explain the risk and exactly how they fixed it — and we can confirm that fix is really in the code.</div></div>
+      <div class="rung rung-4"><div class="rung-badge">4</div><div class="rung-text">Same as above, and they applied the same fix to other similar risks too, not just the one we planted.</div></div>
+    </div>
+
+    <div class="cap-note">
+      <div class="cap-label">We only trust what we can check</div>
+      <p>We never see how a candidate worked, step by step — only their final code and what they wrote about it. So a confident write-up is never enough by itself: the score can never be higher than what's actually proven in the code.</p>
+    </div>
+  </section>
+
+  <section class="dim">
+    <div class="dim-head">
+      <span class="dim-index">05</span>
+      <h2 class="dim-title">Is it ready for the real world?</h2>
+    </div>
+    <div class="tags"><span class="tag">Prompt and Context Engineering</span><span class="tag">Security and Safety</span><span class="tag">Eval, Testing, and Debugging</span></div>
+    <p class="dim-plain">Every use case has one realistic thing designed to trip it up — bad input, a timeout, two things happening at once. Does the submission handle it sensibly? And is that same care shown everywhere, or only at the one spot they knew would be tested?</p>
+
+    <div class="tested-box">
+      <div class="tested-label">We expect every good submission to show:</div>
+      <ul>
+        <li>Sensible handling of that one tricky moment — checked by reading the code, we don't run it ourselves</li>
+        <li>The app keeping track of what it already knows across multiple steps, instead of losing or mixing things up</li>
+        <li>Passwords, keys, and personal data handled safely — not exposed, logged, or over-shared</li>
+        <li>At least a few real tests covering the core logic, not just a demo that happens to work</li>
+      </ul>
+    </div>
+
+    <div class="scale">
+      <div class="rung rung-0"><div class="rung-badge">0</div><div class="rung-text">It crashes, or quietly gives a wrong answer, at the tricky moment. No safety net beyond the basics every framework gives for free.</div></div>
+      <div class="rung rung-1"><div class="rung-badge">1</div><div class="rung-text">It doesn't crash, but fails messily — the user sees a raw error or a generic failure message. No tests written.</div></div>
+      <div class="rung rung-2"><div class="rung-badge">2</div><div class="rung-text">That one moment is handled properly — but it's a one-off fix, not part of a wider habit of careful handling.</div></div>
+      <div class="rung rung-3"><div class="rung-badge">3</div><div class="rung-text">Handled well, and the same careful habit shows up elsewhere too. At least a few real tests exist.</div></div>
+      <div class="rung rung-4"><div class="rung-badge">4</div><div class="rung-text">Same as above, and they're upfront about what they didn't get time to harden — an honest note, not a claim that everything is covered.</div></div>
+    </div>
+
+    <div class="cap-note">
+      <div class="cap-label">One serious problem overrides everything else</div>
+      <p>A <b>real security slip</b> — a password left in the code, personal data logged in plain sight, the app given more access than it needs — caps this score at <b>1</b>, no matter how well everything else is handled.</p>
+      <p><b>Losing track of information</b> partway through a multi-step task caps it at <b>2</b>. We grade this by reading the code only — we don't run the app to check.</p>
+      <p>If a submission trips <b>both of these at once</b> — say, a hard-coded secret and lost context in the same build — the worse one wins: cap at <b>1</b>, not 2.</p>
+    </div>
+  </section>
+
+  <footer>
+    Every score has to point to something real — a specific file, a specific line, or a specific sentence in the write-up. If a score has no cited evidence, we treat it as unreliable — that's how a human can double-check the AI grader before trusting its results. Full technical detail lives in <code>rubric.md</code> and <code>grading-prompt.md</code>.
+  </footer>
+</div>
+
+</body></html>

@@ -1,0 +1,612 @@
+<title>Level 2 Assessment, Explained</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --bg:#F3F5F7;
+  --surface:#FFFFFF;
+  --ink:#151E27;
+  --ink-soft:#54626F;
+  --ink-faint:#8B98A4;
+  --accent:#1C6F63;
+  --accent-ink:#0E4A41;
+  --accent-soft:#E1EFEC;
+  --warn:#A8442F;
+  --warn-soft:#F4E6E1;
+  --line:#DCE2E7;
+  --shadow: 0 1px 2px rgba(21,30,39,0.04), 0 8px 24px rgba(21,30,39,0.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10161B;
+    --surface:#18212A;
+    --ink:#ECF0F3;
+    --ink-soft:#A3B0BB;
+    --ink-faint:#6E7B87;
+    --accent:#5BC4B0;
+    --accent-ink:#B7EBE0;
+    --accent-soft:#1B3833;
+    --warn:#E29584;
+    --warn-soft:#3A2521;
+    --line:#28323B;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 30px rgba(0,0,0,0.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10161B;
+  --surface:#18212A;
+  --ink:#ECF0F3;
+  --ink-soft:#A3B0BB;
+  --ink-faint:#6E7B87;
+  --accent:#5BC4B0;
+  --accent-ink:#B7EBE0;
+  --accent-soft:#1B3833;
+  --warn:#E29584;
+  --warn-soft:#3A2521;
+  --line:#28323B;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 30px rgba(0,0,0,0.35);
+}
+
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'IBM Plex Sans', system-ui, sans-serif;
+  overflow:hidden;
+}
+h1,h2,h3{
+  font-family:'Fraunces', Georgia, serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+  text-wrap:balance;
+  margin:0;
+}
+.mono{font-family:'IBM Plex Mono', ui-monospace, monospace;}
+
+#deck{position:relative; width:100%; height:100vh;}
+
+.slide{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  padding:7vh 8vw 11vh;
+  opacity:0; visibility:hidden;
+  transform:translateX(24px);
+  transition:opacity .38s ease, transform .38s ease, visibility 0s linear .38s;
+}
+.slide.active{
+  opacity:1; visibility:visible; transform:translateX(0);
+  transition:opacity .38s ease, transform .38s ease;
+}
+.slide.prev{ transform:translateX(-24px); }
+
+.slide-inner{ width:100%; max-width:920px; margin:0 auto; }
+
+.eyebrow{
+  display:inline-flex; align-items:center; gap:.5em;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--accent-ink);
+  background:var(--accent-soft);
+  border-radius:100px;
+  padding:5px 12px 5px 10px;
+  margin-bottom:22px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex:none;}
+
+h1.title{font-size:clamp(30px,4.4vw,52px); line-height:1.06; color:var(--ink); max-width:14ch;}
+h2.title{font-size:clamp(24px,3.3vw,36px); line-height:1.12; color:var(--ink); max-width:18ch; margin-bottom:20px;}
+
+p.lede{
+  font-size:clamp(15px,1.5vw,19px);
+  line-height:1.55;
+  color:var(--ink-soft);
+  max-width:56ch;
+  margin-top:16px;
+}
+p.body-text{
+  font-size:15.5px; line-height:1.6; color:var(--ink-soft); max-width:58ch;
+}
+
+.tag-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:26px;}
+.tag{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500;
+  color:var(--ink-soft); border:1px solid var(--line); border-radius:7px;
+  padding:5px 10px; background:var(--surface);
+}
+
+/* ---- Slide 0 : cover ---- */
+.cover-inner{text-align:center; display:flex; flex-direction:column; align-items:center; gap:22px;}
+.cover-mark{width:9px; height:9px; border-radius:50%; background:var(--accent);}
+.cover-line{
+  font-family:'IBM Plex Mono',monospace; font-size:clamp(14px,2vw,18px); font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--ink);
+}
+.cover-rule{width:64px; height:1px; background:var(--line);}
+
+/* ---- Slide 1 : title ---- */
+#s1 .slide-inner{text-align:left;}
+.brandline{
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-faint); margin-bottom:28px;
+}
+.title-stat-row{display:flex; gap:44px; margin-top:44px; flex-wrap:wrap;}
+.stat{min-width:120px;}
+.stat b{display:block; font-family:'Fraunces',serif; font-size:32px; font-weight:600; color:var(--accent-ink);}
+.stat span{font-size:12.5px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; letter-spacing:.03em;}
+
+/* ---- Slide 2: challenge ---- */
+.flow{display:flex; align-items:center; gap:0; margin-top:34px; flex-wrap:wrap;}
+.flow-step{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:16px 18px; box-shadow:var(--shadow); min-width:150px;
+}
+.flow-step b{display:block; font-size:14.5px; color:var(--ink); margin-bottom:3px;}
+.flow-step span{font-size:12.5px; color:var(--ink-faint);}
+.flow-arrow{padding:0 14px; color:var(--ink-faint); font-size:20px; flex:none;}
+.risk-box{
+  margin-top:28px; border-left:3px solid var(--warn); background:var(--warn-soft);
+  padding:14px 18px; border-radius:0 10px 10px 0; max-width:58ch;
+}
+.risk-box b{color:var(--warn); font-family:'IBM Plex Mono',monospace; font-size:12px; letter-spacing:.06em; text-transform:uppercase;}
+.risk-box p{margin:6px 0 0; font-size:14.5px; color:var(--ink-soft); line-height:1.5;}
+
+/* ---- Slide 3: templates -> instances ---- */
+.funnel{display:flex; align-items:stretch; gap:18px; margin-top:38px; flex-wrap:wrap;}
+.funnel-col{flex:1; min-width:180px; text-align:center;}
+.funnel-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:20px 14px; box-shadow:var(--shadow); height:100%;
+}
+.funnel-card .big{font-family:'Fraunces',serif; font-size:30px; font-weight:600; color:var(--accent-ink);}
+.funnel-card .lbl{font-size:12.5px; color:var(--ink-faint); font-family:'IBM Plex Mono',monospace; margin-top:4px;}
+.funnel-card .sub{font-size:12.5px; color:var(--ink-soft); margin-top:10px; line-height:1.4;}
+.funnel-op{display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--ink-faint); flex:none; width:28px;}
+
+/* ---- Slide 4: 4 ingredients grid ---- */
+.ing-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:30px;}
+.ing-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:12px;
+  padding:18px 20px; box-shadow:var(--shadow);
+}
+.ing-num{font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--accent-ink); font-weight:600;}
+.ing-card h3{font-size:16.5px; margin:6px 0 6px; color:var(--ink);}
+.ing-card p{font-size:13.5px; line-height:1.5; color:var(--ink-soft); margin:0;}
+
+/* ---- Slide 5: principles ---- */
+.principle-list{display:grid; grid-template-columns:1fr 1fr; gap:10px 22px; margin-top:24px;}
+.principle-item{display:flex; gap:10px; align-items:flex-start; font-size:14px; color:var(--ink-soft); line-height:1.45;}
+.principle-item .chip{
+  flex:none; width:20px; height:20px; border-radius:5px; background:var(--accent-soft);
+  color:var(--accent-ink); font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600;
+  display:flex; align-items:center; justify-content:center; margin-top:2px;
+}
+.note-card{
+  margin-top:24px; border:1px dashed var(--line); border-radius:10px; padding:14px 18px;
+  font-size:13px; color:var(--ink-faint); line-height:1.55; max-width:62ch;
+}
+
+/* ---- Slide 6: rubric ---- */
+.rubric-row{
+  display:flex; align-items:center; gap:14px; padding:11px 0; border-bottom:1px solid var(--line);
+}
+.rubric-row:last-child{border-bottom:none;}
+.rubric-num{
+  font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-faint);
+  width:20px; flex:none;
+}
+.rubric-name{font-size:14.5px; color:var(--ink); font-weight:500; flex:1; min-width:170px;}
+.rubric-desc{font-size:12.5px; color:var(--ink-faint); flex:2; min-width:200px;}
+.rubric-score{
+  font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; color:var(--accent-ink);
+  background:var(--accent-soft); border-radius:6px; padding:3px 8px; flex:none;
+}
+.total-row{display:flex; justify-content:space-between; align-items:baseline; margin-top:14px; padding-top:14px; border-top:2px solid var(--ink); max-width:600px;}
+.total-row b{font-family:'Fraunces',serif; font-size:22px;}
+
+/* ---- Slide 6b: model-agnostic ---- */
+.agnostic-compare{display:flex; align-items:center; gap:16px; margin-top:30px; flex-wrap:wrap;}
+.agnostic-card{
+  flex:1; min-width:220px; background:var(--surface); border:1px solid var(--line);
+  border-radius:12px; padding:20px 22px; box-shadow:var(--shadow);
+}
+.agnostic-tag{
+  font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--ink-faint);
+  letter-spacing:.08em; text-transform:uppercase; margin-bottom:12px;
+}
+.agnostic-line{font-size:14px; color:var(--ink-soft); margin-bottom:7px; line-height:1.4;}
+.agnostic-line b{color:var(--ink);}
+.agnostic-score{
+  margin-top:14px; display:inline-block; font-family:'IBM Plex Mono',monospace;
+  font-size:11.5px; font-weight:600; letter-spacing:.03em; border-radius:6px; padding:4px 10px;
+}
+.agnostic-score.lose{background:var(--warn-soft); color:var(--warn);}
+.agnostic-score.win{background:var(--accent-soft); color:var(--accent-ink);}
+.agnostic-vs{
+  flex:none; font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--ink-faint);
+  font-weight:600; letter-spacing:.05em; text-transform:uppercase;
+}
+
+/* ---- Slide 7: QC checklist ---- */
+.qc-list{margin-top:26px; display:flex; flex-direction:column; gap:14px;}
+.qc-item{display:flex; gap:14px; align-items:flex-start;}
+.qc-check{
+  flex:none; width:22px; height:22px; border-radius:50%; border:1.5px solid var(--accent);
+  color:var(--accent-ink); display:flex; align-items:center; justify-content:center;
+  font-size:12px; margin-top:1px;
+}
+.qc-item p{margin:0; font-size:14.5px; color:var(--ink-soft); line-height:1.5;}
+.qc-item b{color:var(--ink);}
+
+/* ---- Slide 8: closing ---- */
+.closing-line{font-size:clamp(26px,3.6vw,40px); color:var(--ink); line-height:1.18; max-width:16ch; font-family:'Fraunces',serif; font-weight:600; text-wrap:balance;}
+
+/* ---- Slide 9: appendix sample scorecard ---- */
+.fictional-tag{
+  display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace;
+  font-size:11px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--warn); background:var(--warn-soft); border-radius:100px; padding:4px 11px;
+  margin-bottom:16px;
+}
+#s9 .slide-inner{
+  max-height:88vh; overflow-y:auto; padding-right:10px; scrollbar-width:thin;
+  scrollbar-color:var(--line) transparent;
+}
+#s9 .slide-inner::-webkit-scrollbar{width:7px;}
+#s9 .slide-inner::-webkit-scrollbar-track{background:transparent;}
+#s9 .slide-inner::-webkit-scrollbar-thumb{background:var(--line); border-radius:10px;}
+#s9 .slide-inner::-webkit-scrollbar-thumb:hover{background:var(--ink-faint);}
+.sample-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:14px;
+  padding:20px 24px; box-shadow:var(--shadow); margin-top:6px;
+}
+.sample-head{
+  display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:6px;
+  padding-bottom:12px; border-bottom:1px solid var(--line); margin-bottom:4px;
+}
+.sample-head .name{font-family:'Fraunces',serif; font-weight:600; font-size:16px; color:var(--ink);}
+.sample-head .meta{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--ink-faint);}
+.sample-row{padding:9px 0; border-bottom:1px solid var(--line);}
+.sample-row-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+.sample-dim{font-size:13px; font-weight:500; color:var(--ink);}
+.sample-chip{
+  font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; border-radius:6px;
+  padding:2px 8px; flex:none; background:var(--accent-soft); color:var(--accent-ink);
+}
+.sample-chip.capped{background:var(--warn-soft); color:var(--warn);}
+.sample-evidence{font-size:12.5px; color:var(--ink-soft); margin-top:4px; line-height:1.5; max-width:64ch;}
+.sample-evidence .mono{color:var(--ink-faint); font-size:11px;}
+.sample-cap{
+  display:inline-block; margin-top:6px; font-family:'IBM Plex Mono',monospace; font-size:10px;
+  font-weight:600; color:var(--warn); background:var(--warn-soft); border-radius:5px; padding:2px 7px;
+  letter-spacing:.02em;
+}
+.sample-total{
+  display:flex; justify-content:space-between; align-items:baseline; margin-top:12px;
+  padding-top:12px; border-top:2px solid var(--ink);
+}
+.sample-total b{font-family:'Fraunces',serif; font-size:19px;}
+.sample-summary{
+  margin-top:14px; padding:11px 14px; background:var(--accent-soft); border-radius:10px;
+  font-size:12px; color:var(--ink-soft); line-height:1.5;
+}
+.sample-summary b{
+  color:var(--accent-ink); font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+  letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:4px;
+}
+
+/* ---- nav chrome ---- */
+#progress{position:fixed; top:0; left:0; height:3px; background:var(--accent); z-index:20; transition:width .35s ease;}
+#counter{
+  position:fixed; top:22px; right:28px; font-family:'IBM Plex Mono',monospace; font-size:12px;
+  color:var(--ink-faint); letter-spacing:.05em; z-index:20;
+}
+#dots{
+  position:fixed; bottom:26px; left:50%; transform:translateX(-50%);
+  display:flex; gap:8px; z-index:20;
+}
+.dot-btn{
+  width:7px; height:7px; border-radius:50%; background:var(--line); border:none; cursor:pointer; padding:0;
+  transition:background .2s ease, transform .2s ease;
+}
+.dot-btn.on{background:var(--accent); transform:scale(1.3);}
+.navbtn{
+  position:fixed; top:50%; transform:translateY(-50%); z-index:20;
+  width:40px; height:40px; border-radius:50%; border:1px solid var(--line);
+  background:var(--surface); color:var(--ink-soft); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; font-size:16px;
+  box-shadow:var(--shadow);
+}
+.navbtn:hover{color:var(--accent-ink); border-color:var(--accent);}
+.navbtn:disabled{opacity:.25; cursor:default;}
+#prevBtn{left:20px;}
+#nextBtn{right:20px;}
+#hint{
+  position:fixed; bottom:26px; right:28px; font-size:11.5px; color:var(--ink-faint);
+  font-family:'IBM Plex Mono',monospace; z-index:20;
+}
+@media (max-width:720px){
+  .ing-grid, .principle-list{grid-template-columns:1fr;}
+  .navbtn{display:none;}
+  #hint{display:none;}
+  .slide{padding:8vh 6vw 14vh;}
+}
+</style>
+
+<div id="progress"></div>
+<div id="counter"><span id="cNow">01</span> / <span id="cTotal">08</span></div>
+
+<div id="deck">
+
+  <section class="slide" id="s0">
+    <div class="slide-inner cover-inner">
+      <div class="cover-mark"></div>
+      <div class="cover-line">Level 2 &middot; Applied AI Developer Assessment</div>
+      <div class="cover-rule"></div>
+    </div>
+  </section>
+
+  <section class="slide" id="s1">
+    <div class="slide-inner">
+      <div class="brandline">Level 2 &middot; Applied AI Developer Assessment</div>
+      <h1 class="title">A different assessment for every candidate. The exact same bar for all of them.</h1>
+      <p class="lede">A walkthrough for anyone who needs to understand how the assessment is built, tested, and graded &mdash; without reading the design docs.</p>
+      <div class="title-stat-row">
+        <div class="stat"><b>4</b><span>TEMPLATES</span></div>
+        <div class="stat"><b>300+</b><span>UNIQUE CASES</span></div>
+        <div class="stat"><b>20</b><span>POINT RUBRIC</span></div>
+        <div class="stat"><b>3</b><span>HUMAN REVIEWERS</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s2">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>The challenge</div>
+      <h2 class="title">300 people, one bar, three reviewers</h2>
+      <div class="flow">
+        <div class="flow-step"><b>1,000+ applied</b><span>Level 1 screen</span></div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step"><b>300 cleared</b><span>move to Level 2</span></div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step"><b>24&ndash;48 hrs each</b><span>build a real app, AI tools allowed</span></div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-step"><b>Only 3 people</b><span>can read submissions by hand</span></div>
+      </div>
+      <div class="risk-box">
+        <b>The risk</b>
+        <p>An AI has to do the first read on all 300+, and nothing reaches a human unless it clears that AI screen. If the screen is inconsistent or easy to fake, it quietly filters out the real practitioners &mdash; the exact people this exercise exists to find.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s3">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>The approach</div>
+      <h2 class="title">Write it once, vary it 300 times</h2>
+      <p class="body-text">We didn't hand-write 300 different exams. We built 4 &ldquo;templates&rdquo; &mdash; carefully designed once &mdash; then vary the surface details per candidate, so every case looks different but tests the exact same skills.</p>
+      <div class="funnel">
+        <div class="funnel-col"><div class="funnel-card"><div class="big">4</div><div class="lbl">TEMPLATES</div><div class="sub">One per business shape: triage, extraction, refund handling, order fulfillment</div></div></div>
+        <div class="funnel-op">&times;</div>
+        <div class="funnel-col"><div class="funnel-card"><div class="big">~9</div><div class="lbl">INDUSTRY FLAVORS</div><div class="sub">Same skeleton, different business dressing &mdash; insurance, loans, tickets, orders&hellip;</div></div></div>
+        <div class="funnel-op">&times;</div>
+        <div class="funnel-col"><div class="funnel-card"><div class="big">~4</div><div class="lbl">TRAP / DATA VARIANTS</div><div class="sub">Different planted issue, different dataset each time</div></div></div>
+        <div class="funnel-op">=</div>
+        <div class="funnel-col"><div class="funnel-card"><div class="big">300+</div><div class="lbl">UNIQUE CASES</div><div class="sub">No two candidates compare notes on an identical brief</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s4">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Anatomy of a case</div>
+      <h2 class="title">Every one of the 300+ cases has the same 4 ingredients</h2>
+      <div class="ing-grid">
+        <div class="ing-card"><div class="ing-num">01</div><h3>The brief</h3><p>A realistic business problem. Written to describe <i>what to check</i> &mdash; never <i>which answer is correct</i>, so it can't hand the candidate the answer to what we're actually testing.</p></div>
+        <div class="ing-card"><div class="ing-num">02</div><h3>One fuzzy requirement</h3><p>A genuine judgment call with more than one defensible answer &mdash; not a missing detail they could just look up. We're watching how they reason, not what they guess.</p></div>
+        <div class="ing-card"><div class="ing-num">03</div><h3>One AI trap</h3><p>A spot where a coding assistant, trusted blindly, produces something wrong that still looks fine. Catches whether the candidate actually checks AI output before shipping it.</p></div>
+        <div class="ing-card"><div class="ing-num">04</div><h3>One stress point</h3><p>Messy real-world data &mdash; a duplicate, a timeout, a blank field &mdash; to see if the build holds up or quietly breaks.</p></div>
+      </div>
+      <p class="body-text" style="margin-top:22px;">Plus a matching dataset for every case, checked carefully so nothing about the <i>data itself</i> &mdash; a filename, a column header &mdash; gives the trick away before the candidate even opens it.</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s5">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Where the ideas come from</div>
+      <h2 class="title">Grounded in how the industry already defines this skill</h2>
+      <p class="body-text">We didn't invent the list of what to test from scratch. As a sanity check, we compared our categories against publicly available AI-vendor certification blueprints &mdash; purely to confirm we weren't missing an obvious skill area. Nothing proprietary is copied: every idea below is restated as a plain, tool-agnostic engineering principle any candidate can demonstrate on whatever AI tool they use.</p>
+      <div class="principle-list">
+        <div class="principle-item"><span class="chip">A</span>Building &amp; connecting AI applications</div>
+        <div class="principle-item"><span class="chip">B</span>Agent workflows &amp; orchestration</div>
+        <div class="principle-item"><span class="chip">C</span>Tool / function design for the LLM</div>
+        <div class="principle-item"><span class="chip">D</span>Prompt &amp; context handling</div>
+        <div class="principle-item"><span class="chip">E</span>Security &amp; safety guardrails</div>
+        <div class="principle-item"><span class="chip">F</span>Testing &amp; production readiness</div>
+        <div class="principle-item"><span class="chip">G</span>Cost &amp; efficiency awareness</div>
+        <div class="principle-item"><span class="chip">H</span>Verifying AI output before shipping</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s6">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Scoring</div>
+      <h2 class="title">One rubric. Same one for the AI and the 3 humans.</h2>
+      <div class="rubric-row"><span class="rubric-num">1</span><span class="rubric-name">Architecture fit</span><span class="rubric-desc">Does the design actually match the problem's shape?</span><span class="rubric-score">0&ndash;4</span></div>
+      <div class="rubric-row"><span class="rubric-num">2</span><span class="rubric-name">Agent design, tools &amp; guardrails</span><span class="rubric-desc">Real multi-step reasoning, and a check before any risky action</span><span class="rubric-score">0&ndash;4</span></div>
+      <div class="rubric-row"><span class="rubric-num">3</span><span class="rubric-name">Handling ambiguity</span><span class="rubric-desc">Did they notice the judgment call and reason about it?</span><span class="rubric-score">0&ndash;4</span></div>
+      <div class="rubric-row"><span class="rubric-num">4</span><span class="rubric-name">Verifying AI output</span><span class="rubric-desc">Did they catch the planted trap? Hardest one to fake.</span><span class="rubric-score">0&ndash;4</span></div>
+      <div class="rubric-row"><span class="rubric-num">5</span><span class="rubric-name">Production readiness</span><span class="rubric-desc">Stress point, data handling, basic tests</span><span class="rubric-score">0&ndash;4</span></div>
+      <div class="total-row"><span class="body-text" style="margin:0;">Total score</span><b>0&ndash;20</b></div>
+      <p class="body-text" style="margin-top:18px;">One rule keeps scores honest: a serious miss &mdash; a hard-coded secret, or an AI action with no safety check at all &mdash; <b>caps</b> that whole category's score. Being excellent elsewhere can't average a real failure away.</p>
+    </div>
+  </section>
+
+  <section class="slide" id="s6b">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>How we grade, again</div>
+      <h2 class="title">The model doesn't matter. The engineering around it does.</h2>
+      <p class="body-text">Candidates can use whatever AI model or tool they like &mdash; the rubric is completely model-agnostic. It never scores which model was used, or how accurate its raw answer was. It scores whether the candidate verified that answer, built proper guardrails around it, and made deliberate design choices. A sharper model used carelessly loses to a weaker one used with discipline.</p>
+      <div class="agnostic-compare">
+        <div class="agnostic-card">
+          <div class="agnostic-tag">Candidate A</div>
+          <div class="agnostic-line"><b>Highly accurate</b> raw AI answer</div>
+          <div class="agnostic-line">Never checked it, no guardrail on the action</div>
+          <div class="agnostic-score lose">Scores low</div>
+        </div>
+        <div class="agnostic-vs">vs</div>
+        <div class="agnostic-card">
+          <div class="agnostic-tag">Candidate B</div>
+          <div class="agnostic-line"><b>Less accurate</b> raw AI answer</div>
+          <div class="agnostic-line">Caught it, verified it, gated the action properly</div>
+          <div class="agnostic-score win">Scores high</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s7">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Quality control</div>
+      <h2 class="title">Nothing goes live until it's proven to work</h2>
+      <div class="qc-list">
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>We build the model answer first.</b> Before generating any real cases from a template, we solve it ourselves.</p></div>
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>We test the trap on a live AI assistant.</b> If it doesn't actually fool the assistant, the trap gets reworked or dropped &mdash; never shipped on a guess.</p></div>
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>We run a real, timed human build.</b> To confirm the 24&ndash;48 hour window is realistic before any candidate sees it.</p></div>
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>We re-check every brief and every dataset for accidental spoilers.</b> Including things as small as a filename &mdash; we found and fixed a few cases where a file's own name gave away the trick.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s8">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Where this lands</div>
+      <p class="closing-line">300+ genuinely different assessments. One consistent, checkable bar. Only the strongest reach the 3 people who make the final call.</p>
+      <div class="tag-row">
+        <span class="tag">templates &rarr; instances</span>
+        <span class="tag">ambiguity + trap + stress point</span>
+        <span class="tag">one shared rubric</span>
+        <span class="tag">calibrated before use</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="s8b">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Appendix</div>
+      <h2 class="title">What every candidate actually turns in</h2>
+      <div class="qc-list">
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>One zip of the complete project.</b> Any folder structure they like &mdash; 10MB max, dependency/build folders excluded. No commit history is collected or graded.</p></div>
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>A short <span class="mono">MANIFEST.md</span> at the root.</b> Just a map: where the agent/orchestration logic lives, where the tool definitions are, where the guardrail check sits, and where persistence happens.</p></div>
+        <div class="qc-item"><div class="qc-check">&check;</div><p><b>A written rationale, about half a page.</b> Their key decisions, how they resolved the underspecified requirement, anything they questioned or corrected from an AI assistant's suggestion, and what they'd do with more time.</p></div>
+      </div>
+      <div class="note-card">That's it &mdash; no separate AI-chat log and no interaction history is captured or expected from any candidate. Grading works from exactly these two things: the final code, and the rationale. Every rubric dimension is built around that constraint on purpose, not as a workaround.</div>
+    </div>
+  </section>
+
+  <section class="slide" id="s9">
+    <div class="slide-inner">
+      <div class="eyebrow"><span class="dot"></span>Appendix</div>
+      <h2 class="title">What the evaluation agent actually hands back</h2>
+      <div class="fictional-tag">&#9888; Fictional example &mdash; no real candidate</div>
+      <div class="sample-card">
+        <div class="sample-head">
+          <span class="name">Sample Submission &mdash; T02 / Vendor Invoices</span>
+          <span class="meta">AI GRADER OUTPUT &middot; 13 / 20</span>
+        </div>
+        <div class="sample-row">
+          <div class="sample-row-top"><span class="sample-dim">1&nbsp;&middot; Architecture fit</span><span class="sample-chip">3 / 4</span></div>
+          <div class="sample-evidence">The app is built the way you'd expect for this kind of job: read the invoice, pull out the fields, double-check them, then save the result &mdash; and the write-up explains why they chose to look up related invoices in batches rather than one at a time. <span class="mono">(MANIFEST.md)</span></div>
+        </div>
+        <div class="sample-row">
+          <div class="sample-row-top"><span class="sample-dim">2&nbsp;&middot; Agentic design, tools &amp; guardrails</span><span class="sample-chip capped">2 / 4</span></div>
+          <div class="sample-evidence">The app does double-check what it extracted and looks up related invoices when needed &mdash; but before it saves a record automatically, it only checks how confident the extraction felt, not whether the dollar amount itself is actually correct. <span class="mono">(invoice_service.py)</span></div>
+          <div class="sample-cap">Capped at 2/4 &mdash; there's a real check before it saves automatically, but it doesn't cover the one number that matters most</div>
+        </div>
+        <div class="sample-row">
+          <div class="sample-row-top"><span class="sample-dim">3&nbsp;&middot; Handling ambiguity</span><span class="sample-chip">3 / 4</span></div>
+          <div class="sample-evidence">The write-up notices that an invoice due date can be stated two different ways, explains which reading it picked and why &mdash; instead of just silently guessing one.</div>
+        </div>
+        <div class="sample-row">
+          <div class="sample-row-top"><span class="sample-dim">4&nbsp;&middot; Verifying AI output</span><span class="sample-chip">3 / 4</span></div>
+          <div class="sample-evidence">Before saving a record, the app makes sure every extracted value can actually be traced back to something in the invoice itself &mdash; so it won't invent a number that was never really there. The write-up names this exact risk and points to where the fix lives. <span class="mono">(extract.py:88)</span></div>
+        </div>
+        <div class="sample-row" style="border-bottom:none;">
+          <div class="sample-row-top"><span class="sample-dim">5&nbsp;&middot; Production readiness</span><span class="sample-chip capped">2 / 4</span></div>
+          <div class="sample-evidence">When a file accidentally contains two invoices stuck together, the app correctly splits them into two separate records &mdash; but there's no automated test proving this keeps working over time.</div>
+        </div>
+        <div class="sample-total"><span class="body-text" style="margin:0;">Total</span><b>13 / 20</b></div>
+        <div class="sample-summary">
+          <b>Reviewer summary</b>
+          This candidate is genuinely careful about not trusting made-up AI output &mdash; that's the hardest thing to fake, and they got it right. The one thing worth a second look before shipping: the app can still save a wrong dollar amount automatically, because nothing double-checks that specific number before it's saved. There are also no automated tests to fall back on.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button class="navbtn" id="prevBtn" aria-label="Previous">&larr;</button>
+<button class="navbtn" id="nextBtn" aria-label="Next">&rarr;</button>
+<div id="dots"></div>
+<div id="hint">&larr; &rarr; to navigate</div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let idx = 0;
+
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_,i)=>{
+    const b = document.createElement('button');
+    b.className = 'dot-btn';
+    b.setAttribute('aria-label', 'Go to slide ' + (i+1));
+    b.addEventListener('click', ()=>go(i));
+    dotsEl.appendChild(b);
+  });
+  const dots = Array.from(dotsEl.children);
+
+  const progress = document.getElementById('progress');
+  const cNow = document.getElementById('cNow');
+  const cTotal = document.getElementById('cTotal');
+  cTotal.textContent = String(total).padStart(2,'0');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function render(){
+    slides.forEach((s,i)=>{
+      s.classList.remove('active','prev');
+      if(i===idx) s.classList.add('active');
+      else if(i<idx) s.classList.add('prev');
+    });
+    dots.forEach((d,i)=>d.classList.toggle('on', i===idx));
+    progress.style.width = ((idx+1)/total*100) + '%';
+    cNow.textContent = String(idx+1).padStart(2,'0');
+    prevBtn.disabled = idx===0;
+    nextBtn.disabled = idx===total-1;
+  }
+  function go(i){ idx = Math.max(0, Math.min(total-1, i)); render(); }
+
+  prevBtn.addEventListener('click', ()=>go(idx-1));
+  nextBtn.addEventListener('click', ()=>go(idx+1));
+  window.addEventListener('keydown', (e)=>{
+    if(e.key==='ArrowRight' || e.key===' '){ go(idx+1); e.preventDefault(); }
+    if(e.key==='ArrowLeft'){ go(idx-1); e.preventDefault(); }
+  });
+
+  let touchX = null;
+  window.addEventListener('touchstart', e=>touchX=e.touches[0].clientX, {passive:true});
+  window.addEventListener('touchend', e=>{
+    if(touchX===null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if(dx > 60) go(idx-1);
+    else if(dx < -60) go(idx+1);
+    touchX = null;
+  });
+
+  render();
+})();
+</script>
